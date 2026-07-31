@@ -1,0 +1,47 @@
+{
+  "name": "tarot",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "seed": "tsx src/scripts/seed-tarot-cards.ts",
+    "seed:admin": "tsx src/scripts/seed-admin.ts"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^5.2.2",
+    "astronomy-engine": "^2.1.19",
+    "bcryptjs": "^3.0.2",
+    "framer-motion": "^12.23.12",
+    "jose": "^6.0.12",
+    "mongoose": "^8.17.1",
+    "nanoid": "^5.1.5",
+    "next": "16.2.12",
+    "nodemailer": "^7.0.5",
+    "pdfkit": "^0.17.1",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "react-hook-form": "^7.62.0",
+    "uuid": "^11.1.0",
+    "zod": "^3.25.76",
+    "zod-to-json-schema": "^3.24.6"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/node": "^20",
+    "@types/nodemailer": "^6.4.17",
+    "@types/pdfkit": "^0.17.2",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@types/uuid": "^10.0.0",
+    "dotenv": "^17.2.1",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.12",
+    "tailwindcss": "^4",
+    "tsx": "^4.20.3",
+    "typescript": "^5"
+  }
+}

@@ -1,0 +1,72 @@
+1. The Fool
+2. The Magician
+3. The High Priestess
+4. The Empress
+5. The Emperor
+6. The Hierophant
+7. The Lovers
+8. The Chariot
+9. Strength
+10. The Hermit
+11. Wheel of Fortune
+12. Justice
+13. The Hanged Man
+14. Death
+15. Temperance
+16. The Devil
+17. The Tower
+18. The Star
+19. The Moon
+20. The Sun
+21. Judgement
+22. The World
+23. Ace of Cups
+24. Two of Cups
+25. Three of Cups
+26. Four of Cups
+27. Five of Cups
+28. Six of Cups
+29. Seven of Cups
+30. Eight of Cups
+31. Nine of Cups
+32. Ten of Cups
+33. Page of Cups
+34. Knight of Cups
+35. Queen of Cups
+36. King of Cups
+37. Ace of Wands
+38. Two of Wands
+39. Three of Wands
+40. Four of Wands
+41. Five of Wands
+42. Six of Wands
+43. Seven of Wands
+44. Eight of Wands
+45. Nine of Wands
+46. Ten of Wands
+47. Page of Wands
+48. Knight of Wands
+49. Queen of Wands
+50. King of Wands
+51. Ace of Swords
+52. Two of Swords
+53. Three of Swords
+54. Four of Swords
+55. Five of Swords
+56. Six of Swords
+57. Seven of Swords
+58. Eight of Swords
+59. Nine of Swords
+60. Ten of Swords
+61. Page of Swords
+62. Knight of Swords
+63. Queen of Swords
+64. King of Swords
+65. Ace of Pentacles
+66. Two of Pentacles
+67. Three of Pentacles
+68. Four of Pentacles
+69. Five of Pentacles
+70. Six of Pentacles
+71. Seven of Pentacles
+72. Eight of Pentacles

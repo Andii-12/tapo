@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="480" viewBox="0 0 300 480">
+  <rect width="300" height="480" fill="#FAFAF8"/>
+  <rect x="12" y="12" width="276" height="456" fill="none" stroke="#111" stroke-width="1.5"/>
+  <rect x="20" y="20" width="260" height="440" fill="none" stroke="#111" stroke-width="0.5"/>
+  <g transform="translate(75, 70) scale(1.5)">
+    <rect x="40" y="28" width="20" height="50" fill="none" stroke="#111111" stroke-width="1.5"/>
+    <path d="M36 28 H64" stroke="#111111" stroke-width="1.5"/>
+    <path d="M28 22 L50 36 L40 20" fill="none" stroke="#111111"/>
+    <path d="M72 24 L50 40 L62 18" fill="none" stroke="#111111"/>
+    <line x1="44" y1="42" x2="56" y2="42" stroke="#111111"/>
+    <line x1="44" y1="52" x2="56" y2="52" stroke="#111111"/>
+  </g>
+  <text x="150" y="310" text-anchor="middle" font-family="Georgia, serif" font-size="14" fill="#111">17</text>
+  <text x="150" y="345" text-anchor="middle" font-family="Georgia, serif" font-size="18" fill="#111">The Tower</text>
+  <line x1="60" y1="400" x2="240" y2="400" stroke="#D8D8D8" stroke-width="1"/>
+  <circle cx="150" cy="420" r="3" fill="#111"/>
+</svg>
