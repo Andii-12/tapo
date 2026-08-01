@@ -81,6 +81,7 @@ This button appears only when `NODE_ENV !== production`.
 | `npm run start` | Start production server |
 | `npm run seed` | Seed 72 cards + SVG images |
 | `npm run seed:admin` | Create admin password hash in `.env.local` |
+| `npm run optimize:cards` | Generate WebP thumbnails from PNG card art |
 
 ## Security notes
 

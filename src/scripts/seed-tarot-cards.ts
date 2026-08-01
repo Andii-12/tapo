@@ -138,6 +138,14 @@ async function seed() {
   );
   console.log(`Seeded ${cards.length} cards with EN+MN meanings`);
 
+  const thumbsDir = path.join(cardsDir, "thumbs");
+  const thumbCount = fs.existsSync(thumbsDir)
+    ? fs.readdirSync(thumbsDir).filter((f) => f.endsWith(".webp")).length
+    : 0;
+  if (thumbCount < 72) {
+    console.log("Tip: run `npm run optimize:cards` for fast card grid loading.");
+  }
+
   await Settings.findOneAndUpdate(
     { key: "global" },
     {

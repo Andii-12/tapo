@@ -1,6 +1,12 @@
 "use client";
 
+import Image from "next/image";
 import { getCardIconSvg } from "@/lib/tarot/card-icons";
+import {
+  cardImageSizes,
+  cardThumbUrl,
+  isRasterCardImage,
+} from "@/lib/tarot/card-image";
 
 export function CardIcon({
   slug,
@@ -32,17 +38,28 @@ export function CardThumb({
   imageUrl,
   slug,
   className = "",
+  priority = false,
+  fullResolution = false,
 }: {
   nameEn: string;
   nameMn?: string;
   imageUrl?: string;
   slug?: string;
   className?: string;
+  /** Load immediately (above-the-fold hero cards). */
+  priority?: boolean;
+  /** Use full PNG in modals / detail views. */
+  fullResolution?: boolean;
 }) {
   const label = nameEn || nameMn || "";
   const iconSlug = slug || "the-fool";
-
-  const usePhoto = Boolean(imageUrl && /\.(png|jpe?g|webp|gif)$/i.test(imageUrl));
+  const usePhoto = isRasterCardImage(imageUrl);
+  const src =
+    usePhoto && imageUrl
+      ? fullResolution
+        ? imageUrl
+        : cardThumbUrl(imageUrl)
+      : null;
 
   return (
     <div
@@ -51,12 +68,14 @@ export function CardThumb({
     >
       <div className="absolute inset-[3px] border border-border" />
 
-      {usePhoto ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={imageUrl}
+      {usePhoto && src ? (
+        <Image
+          src={src}
           alt={label}
-          className="absolute inset-0 h-full w-full object-cover"
+          fill
+          sizes={cardImageSizes(!fullResolution)}
+          priority={priority}
+          className="object-cover"
         />
       ) : (
         <>

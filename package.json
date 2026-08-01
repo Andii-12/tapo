@@ -9,7 +9,8 @@
     "lint": "eslint",
     "seed": "tsx src/scripts/seed-tarot-cards.ts",
     "seed:admin": "tsx src/scripts/seed-admin.ts",
-    "migrate:atlas": "tsx src/scripts/migrate-to-atlas.ts"
+    "migrate:atlas": "tsx src/scripts/migrate-to-atlas.ts",
+    "optimize:cards": "tsx src/scripts/optimize-card-images.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -42,6 +43,7 @@
     "dotenv": "^17.2.1",
     "eslint": "^9",
     "eslint-config-next": "16.2.12",
+    "sharp": "^0.35.3",
     "tailwindcss": "^4",
     "tsx": "^4.20.3",
     "typescript": "^5"

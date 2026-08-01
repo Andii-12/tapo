@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { CardThumb, CardIcon } from "@/components/tarot/CardThumb";
+import { CardThumb } from "@/components/tarot/CardThumb";
 import { Button } from "@/components/ui/Button";
 import { LoadingState, ErrorState } from "@/components/ui/States";
 import { MysticAtmosphere } from "@/components/ui/MysticAtmosphere";
@@ -174,6 +174,7 @@ export default function AllCardsPage() {
                 nameMn={card.nameMn}
                 imageUrl={card.imageUrl}
                 slug={card.slug}
+                priority={i < 6}
                 className="transition group-hover:shadow-[0_10px_24px_rgba(17,17,17,0.12)]"
               />
               <p className="mt-2 truncate text-center text-[11px] text-ink-muted">
@@ -254,61 +255,14 @@ export default function AllCardsPage() {
                   }}
                   style={{ transformPerspective: 900 }}
                 >
-                  <div className="relative flex aspect-[2/3] w-full flex-col items-center justify-center overflow-hidden border border-ink bg-bg-white">
-                    {/\.(png|jpe?g|webp|gif)$/i.test(selected.imageUrl) ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={selected.imageUrl}
-                        alt={selected.nameEn}
-                        className="absolute inset-0 h-full w-full object-cover"
-                      />
-                    ) : (
-                      <>
-                        <motion.div
-                          className="pointer-events-none absolute inset-0"
-                          initial={{ opacity: 0.5 }}
-                          animate={{ opacity: 0 }}
-                          transition={{ delay: 0.35, duration: 0.8 }}
-                          style={{
-                            background:
-                              "radial-gradient(circle at 50% 40%, rgba(255,255,255,0.9), transparent 65%)",
-                          }}
-                        />
-                        <div className="mb-auto mt-2 w-full border border-border p-1 text-center text-[10px] tracking-[0.2em] text-ink-soft">
-                          {String(selected.number).padStart(2, "0")}
-                        </div>
-                        <motion.div
-                          initial={{ opacity: 0, scale: 0.7 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{ delay: 0.4, duration: 0.55 }}
-                        >
-                          <motion.div
-                            animate={{ y: [0, -3, 0] }}
-                            transition={{
-                              duration: 3.2,
-                              repeat: Infinity,
-                              ease: "easeInOut",
-                              delay: 1,
-                            }}
-                          >
-                            <CardIcon
-                              slug={selected.slug}
-                              size={120}
-                              className="text-ink"
-                            />
-                          </motion.div>
-                        </motion.div>
-                        <motion.p
-                          className="mt-4 text-center font-serif text-sm"
-                          initial={{ opacity: 0, y: 6 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.55 }}
-                        >
-                          {selected.nameEn}
-                        </motion.p>
-                      </>
-                    )}
-                  </div>
+                  <CardThumb
+                    nameEn={selected.nameEn}
+                    nameMn={selected.nameMn}
+                    imageUrl={selected.imageUrl}
+                    slug={selected.slug}
+                    priority
+                    className="w-full border-0"
+                  />
                 </motion.div>
 
                 <motion.div

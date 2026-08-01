@@ -47,7 +47,6 @@ export async function ensureStaticTestimonials() {
           quote: item.quote,
           meta: item.meta,
           tag: item.tag,
-          sentiment: item.sentiment,
           status: "approved",
           isStatic: true,
         },

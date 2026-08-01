@@ -1,8 +1,14 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { RevealAura } from "@/components/ui/MysticAtmosphere";
 import { CardIcon } from "@/components/tarot/CardThumb";
+import {
+  cardImageSizes,
+  cardThumbUrl,
+  isRasterCardImage,
+} from "@/lib/tarot/card-image";
 
 export function CardBack({
   selected,
@@ -132,7 +138,7 @@ export function CardFront({
       >
         <motion.div
           className={`absolute inset-0 flex flex-col items-center overflow-hidden rounded-sm border border-border bg-bg-white ${
-            imageUrl && /\.(png|jpe?g|webp|gif)$/i.test(imageUrl) ? "p-0" : "p-2"
+            isRasterCardImage(imageUrl) ? "p-0" : "p-2"
           }`}
           style={{ backfaceVisibility: "hidden" }}
           animate={
@@ -156,18 +162,19 @@ export function CardFront({
               transition={{ duration: 0.8 }}
             />
           ) : null}
-          {imageUrl && /\.(png|jpe?g|webp|gif)$/i.test(imageUrl) ? (
+          {isRasterCardImage(imageUrl) ? (
             <motion.div
               className="relative h-full w-full"
               initial={false}
               animate={flipped ? { opacity: 1, scale: 1 } : { opacity: 0.6, scale: 0.96 }}
               transition={{ delay: flipped ? 0.25 : 0, duration: 0.5 }}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={imageUrl}
+              <Image
+                src={cardThumbUrl(imageUrl)}
                 alt={nameMn}
-                className="h-full w-full object-cover"
+                fill
+                sizes={cardImageSizes(false)}
+                className="object-cover"
               />
             </motion.div>
           ) : (
