@@ -20,6 +20,45 @@ type EnMeaning = {
   yesNoExplanationEn: string;
 };
 
+const cardsDir = path.join(process.cwd(), "public", "cards");
+const cardsImageDir = path.join(process.cwd(), "public", "Cards-image");
+
+/** Copy hand-drawn PNGs from public/Cards-image → public/cards (e.g. "41. Five of Wands.png" → card-041.png) */
+function syncCardsImageFromSource(): number {
+  if (!fs.existsSync(cardsImageDir)) return 0;
+
+  fs.mkdirSync(cardsDir, { recursive: true });
+  let copied = 0;
+
+  for (const file of fs.readdirSync(cardsImageDir)) {
+    const match = file.match(/^(\d+)\.\s*.+\.png$/i);
+    if (!match) continue;
+
+    const num = Number(match[1]);
+    if (num < 1 || num > 72) continue;
+
+    const pad = String(num).padStart(3, "0");
+    fs.copyFileSync(
+      path.join(cardsImageDir, file),
+      path.join(cardsDir, `card-${pad}.png`)
+    );
+    copied += 1;
+  }
+
+  return copied;
+}
+
+function resolveImageUrl(number: number): string {
+  const pad = String(number).padStart(3, "0");
+  if (fs.existsSync(path.join(cardsDir, `card-${pad}.png`))) {
+    return `/cards/card-${pad}.png`;
+  }
+  if (fs.existsSync(path.join(cardsDir, `card-${pad}.svg`))) {
+    return `/cards/card-${pad}.svg`;
+  }
+  return `/cards/card-${pad}.svg`;
+}
+
 function cardSvg(number: number, nameEn: string, slug: string): string {
   const safeEn = nameEn.replace(/[<>&]/g, "");
   const icon = getCardIconSvg(slug)
@@ -45,8 +84,11 @@ async function seed() {
   await mongoose.connect(config.mongodbUri);
   console.log("Connected to MongoDB");
 
-  const cardsDir = path.join(process.cwd(), "public", "cards");
   fs.mkdirSync(cardsDir, { recursive: true });
+  const imported = syncCardsImageFromSource();
+  if (imported > 0) {
+    console.log(`Imported ${imported} PNG(s) from public/Cards-image`);
+  }
   const enMap = meaningsEn as Record<string, EnMeaning>;
 
   let svgCount = 0;
@@ -72,7 +114,7 @@ async function seed() {
         slug: c.slug,
         nameMn: c.nameMn,
         nameEn: c.nameEn,
-        imageUrl: c.imageUrl,
+        imageUrl: resolveImageUrl(c.number),
         shortMeaningMn: c.shortMeaningMn,
         detailedMeaningMn: c.detailedMeaningMn,
         keywordsMn: c.keywordsMn,

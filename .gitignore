@@ -1,6 +1,4 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# dependencies
+# Dependencies
 /node_modules
 /.pnp
 .pnp.*
@@ -10,33 +8,54 @@
 !.yarn/releases
 !.yarn/versions
 
-# testing
-/coverage
-
-# next.js
+# Next.js
 /.next/
 /out/
-
-# production
 /build
 
-# misc
-.DS_Store
-*.pem
+# Testing
+/coverage
 
-# debug
+# Production
+/dist
+
+# Environment & secrets — NEVER commit real keys/passwords
+.env
+.env.*
+!.env.example
+
+# Non-dot env copies (local backups / downloads)
+env.download
+env.local
+env.example
+env.*
+
+# Debug logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
-!.env.example
+# TypeScript
+*.tsbuildinfo
 
-# vercel
+# Vercel
 .vercel
 
-# typescript
-*.tsbuildinfo
-next-env.d.ts
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# IDE / editor
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Optional local tooling
+.turbo
+
+# Certificates / keys
+*.pem
