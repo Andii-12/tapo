@@ -146,7 +146,38 @@ function buildNatalEmailHtml(params: {
 }
 
 async function sendMail(to: string, subject: string, html: string) {
-  if (config.email.provider === "console" || !config.email.smtpHost) {
+  if (config.email.provider === "console") {
+    console.log("[email:console]", { to, subject, html: html.slice(0, 280) });
+    return { messageId: `console-${Date.now()}` };
+  }
+
+  if (config.email.provider === "resend") {
+    if (!config.email.resendApiKey) {
+      console.log("[email:console]", {
+        to,
+        subject,
+        reason: "RESEND_API_KEY missing",
+      });
+      return { messageId: `console-${Date.now()}` };
+    }
+
+    const { Resend } = await import("resend");
+    const resend = new Resend(config.email.resendApiKey);
+    const result = await resend.emails.send({
+      from: config.email.from,
+      to: [to],
+      subject,
+      html,
+    });
+
+    if (result.error) {
+      throw new Error(result.error.message);
+    }
+
+    return { messageId: result.data?.id ?? `resend-${Date.now()}` };
+  }
+
+  if (!config.email.smtpHost) {
     console.log("[email:console]", { to, subject, html: html.slice(0, 280) });
     return { messageId: `console-${Date.now()}` };
   }

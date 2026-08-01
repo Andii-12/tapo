@@ -26,11 +26,12 @@ export const config = {
   },
   email: {
     provider: (process.env.EMAIL_PROVIDER || "smtp") as "smtp" | "resend" | "console",
+    resendApiKey: process.env.RESEND_API_KEY || "",
     smtpHost: process.env.SMTP_HOST || "",
     smtpPort: Number(process.env.SMTP_PORT || 587),
     smtpUser: process.env.SMTP_USER || "",
     smtpPassword: process.env.SMTP_PASSWORD || "",
-    from: process.env.EMAIL_FROM || "ТАРО <noreply@tarot.mn>",
+    from: process.env.EMAIL_FROM || "ТАРО <onboarding@resend.dev>",
   },
   rateLimit: {
     windowMs: Number(process.env.RATE_LIMIT_WINDOW_MS || 60000),
