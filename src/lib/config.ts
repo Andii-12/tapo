@@ -14,11 +14,32 @@ export const config = {
       "https://api.openai.com/v1/chat/completions",
   },
   payment: {
-    provider: (process.env.PAYMENT_PROVIDER || "mock") as "mock" | "qpay",
-    apiUrl: process.env.PAYMENT_API_URL || "",
-    username: process.env.PAYMENT_USERNAME || "",
-    password: process.env.PAYMENT_PASSWORD || "",
-    webhookSecret: process.env.PAYMENT_WEBHOOK_SECRET || "dev-webhook-secret",
+    provider: (process.env.PAYMENT_PROVIDER || "mock") as
+      | "mock"
+      | "byl"
+      | "qpay",
+    apiUrl:
+      process.env.BYL_API_URL ||
+      process.env.PAYMENT_API_URL ||
+      "https://byl.mn/api/v1",
+    token: process.env.BYL_TOKEN || process.env.PAYMENT_API_KEY || "",
+    projectId: process.env.BYL_PROJECT_ID || "",
+    /** QPay direct (legacy) — only when PAYMENT_PROVIDER=qpay */
+    username:
+      process.env.PAYMENT_USERNAME || process.env.QPAY_USERNAME || "",
+    password:
+      process.env.PAYMENT_PASSWORD || process.env.QPAY_PASSWORD || "",
+    invoiceCode:
+      process.env.QPAY_INVOICE_CODE ||
+      process.env.PAYMENT_INVOICE_CODE ||
+      "",
+    callbackUrl:
+      process.env.QPAY_CALLBACK_URL ||
+      `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/payments/qpay/callback`,
+    webhookSecret:
+      process.env.BYL_WEBHOOK_SECRET ||
+      process.env.PAYMENT_WEBHOOK_SECRET ||
+      "dev-webhook-secret",
     threeCardPrice: Number(process.env.THREE_CARD_PRICE || 19900),
     fiveCardPrice: Number(process.env.FIVE_CARD_PRICE || 29900),
     natalPrice: Number(process.env.NATAL_PRICE || 14900),

@@ -10,7 +10,7 @@ export interface IPayment {
   natalOrderId?: string;
   amount: number;
   currency: string;
-  provider: "mock" | "qpay";
+  provider: "mock" | "byl" | "qpay";
   status: PaymentProviderStatus;
   providerTransactionId?: string;
   qrPayload?: string;

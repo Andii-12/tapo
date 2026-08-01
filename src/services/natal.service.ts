@@ -5,7 +5,6 @@ import { config } from "@/lib/config";
 import {
   generateAccessToken,
   generateNatalOrderId,
-  generatePaymentRef,
   hashToken,
   safeEqual,
 } from "@/lib/security/tokens";
@@ -14,8 +13,11 @@ import {
   buildNatalFullReport,
   buildNatalPreview,
 } from "@/lib/astrology/report";
-import { getMockPaymentProvider, getPaymentProvider } from "@/lib/payment/provider";
-import { getPrices } from "@/services/payment.service";
+import {
+  createProviderPayment,
+  getPrices,
+  syncPaymentWithProvider,
+} from "@/services/payment.service";
 
 function verifyNatalToken(
   order: { accessTokenHash: string },
@@ -113,26 +115,13 @@ export async function createNatalPayment(orderId: string, token: string) {
     throw new Error("Төлбөр аль хэдийн амжилттай болсон");
   }
 
-  const paymentRef = generatePaymentRef();
-  const provider = getPaymentProvider();
-  const created = await provider.createPayment({
-    readingId: orderId,
-    amount: order.price,
-    currency: order.currency,
-    paymentRef,
-  });
-
-  const payment = await Payment.create({
-    paymentRef,
+  const payment = await createProviderPayment({
     productType: "natal",
-    natalOrderId: orderId,
+    orderRef: orderId,
     amount: order.price,
     currency: order.currency,
-    provider: created.provider,
-    status: "pending",
-    providerTransactionId: created.providerTransactionId,
-    qrPayload: created.qrPayload,
-    checkoutUrl: created.checkoutUrl,
+    natalOrderId: orderId,
+    description: `ТАРО · Natal тайлан · ${orderId} · ${order.price} ${order.currency}`,
   });
 
   order.paymentStatus = "pending";
@@ -172,9 +161,25 @@ export async function getNatalPaymentStatus(orderId: string, token: string) {
   if (!order) throw new Error("Захиалга олдсонгүй");
   if (!verifyNatalToken(order, token)) throw new Error("Хандалт буруу");
 
-  const payment = await Payment.findOne({ natalOrderId: orderId }).sort({
+  let payment = await Payment.findOne({ natalOrderId: orderId }).sort({
     createdAt: -1,
   });
+
+  if (
+    payment &&
+    payment.status === "pending" &&
+    (payment.provider === "byl" || payment.provider === "qpay")
+  ) {
+    await syncPaymentWithProvider(payment);
+    payment = await Payment.findOne({ natalOrderId: orderId }).sort({
+      createdAt: -1,
+    });
+  }
+
+  const meta = (payment?.metadata || {}) as {
+    qrImage?: string;
+    bankUrls?: Array<{ name: string; link: string; logo?: string }>;
+  };
 
   return {
     paymentStatus: order.paymentStatus,
@@ -184,8 +189,11 @@ export async function getNatalPaymentStatus(orderId: string, token: string) {
           amount: payment.amount,
           currency: payment.currency,
           status: payment.status,
+          provider: payment.provider,
           qrPayload: payment.qrPayload,
+          qrImage: meta.qrImage,
           checkoutUrl: payment.checkoutUrl,
+          bankUrls: meta.bankUrls,
           paidAt: payment.paidAt,
         }
       : null,

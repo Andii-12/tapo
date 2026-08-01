@@ -1,11 +1,58 @@
+import mongoose from "mongoose";
 import { connectDB } from "@/lib/database/connect";
-import { Payment } from "@/models/Payment";
+import { Payment, type IPayment } from "@/models/Payment";
 import { Reading } from "@/models/Reading";
 import { Settings } from "@/models/Settings";
 import { config } from "@/lib/config";
 import { generatePaymentRef } from "@/lib/security/tokens";
-import { getMockPaymentProvider, getPaymentProvider } from "@/lib/payment/provider";
+import {
+  getMockPaymentProvider,
+  getPaymentProvider,
+  getProviderByName,
+  type PaymentProviderName,
+} from "@/lib/payment/provider";
 import type { ReadingType } from "@/types";
+
+const EXTERNAL_PROVIDERS: PaymentProviderName[] = ["byl", "qpay"];
+
+function paymentPayload(payment: IPayment) {
+  const meta = (payment.metadata || {}) as {
+    qrImage?: string;
+    bankUrls?: Array<{ name: string; link: string; logo?: string }>;
+  };
+
+  return {
+    paymentRef: payment.paymentRef,
+    amount: payment.amount,
+    currency: payment.currency,
+    status: payment.status,
+    provider: payment.provider,
+    qrPayload: payment.qrPayload,
+    qrImage: meta.qrImage,
+    checkoutUrl: payment.checkoutUrl,
+    bankUrls: meta.bankUrls,
+    paidAt: payment.paidAt,
+  };
+}
+
+function paymentDescription(
+  product: "reading" | "natal",
+  ref: string,
+  amount: number,
+  currency: string,
+  readingType?: ReadingType
+) {
+  if (product === "natal") {
+    return `ТАРО · Natal тайлан · ${ref} · ${amount} ${currency}`;
+  }
+  const label =
+    readingType === "five-card"
+      ? "5 хөзрийн уншлага"
+      : readingType === "three-card"
+        ? "3 хөзрийн уншлага"
+        : "Таро уншлага";
+  return `ТАРО · ${label} · ${ref} · ${amount} ${currency}`;
+}
 
 export async function getPrices() {
   await connectDB();
@@ -34,6 +81,34 @@ export function priceForType(
   return 0;
 }
 
+type PaymentDoc = mongoose.HydratedDocument<IPayment>;
+
+export async function syncPaymentWithProvider(
+  payment: PaymentDoc
+): Promise<PaymentDoc> {
+  if (
+    payment.status === "paid" ||
+    !EXTERNAL_PROVIDERS.includes(payment.provider as PaymentProviderName)
+  ) {
+    return payment;
+  }
+  if (!payment.providerTransactionId) {
+    return payment;
+  }
+
+  const provider = getProviderByName(payment.provider as PaymentProviderName);
+  const status = await provider.checkPayment(payment.providerTransactionId);
+  if (status !== "paid") {
+    return payment;
+  }
+
+  payment.status = "paid";
+  payment.paidAt = new Date();
+  await payment.save();
+  await fulfillPaidPayment(payment);
+  return payment;
+}
+
 export async function createPaymentOrder(readingId: string) {
   await connectDB();
   const reading = await Reading.findOne({ readingId });
@@ -43,6 +118,18 @@ export async function createPaymentOrder(readingId: string) {
   }
   if (reading.paymentStatus === "paid") {
     throw new Error("Төлбөр аль хэдийн амжилттай болсон");
+  }
+
+  const existing = await Payment.findOne({
+    readingId,
+    status: "pending",
+    provider: config.payment.provider,
+  }).sort({ createdAt: -1 });
+
+  if (existing?.providerTransactionId) {
+    reading.paymentStatus = "pending";
+    await reading.save();
+    return existing;
   }
 
   const prices = await getPrices();
@@ -55,6 +142,13 @@ export async function createPaymentOrder(readingId: string) {
     amount,
     currency: prices.currency,
     paymentRef,
+    description: paymentDescription(
+      "reading",
+      paymentRef,
+      amount,
+      prices.currency,
+      reading.readingType
+    ),
   });
 
   const payment = await Payment.create({
@@ -68,6 +162,10 @@ export async function createPaymentOrder(readingId: string) {
     providerTransactionId: created.providerTransactionId,
     qrPayload: created.qrPayload,
     checkoutUrl: created.checkoutUrl,
+    metadata: {
+      qrImage: created.qrImage,
+      bankUrls: created.bankUrls,
+    },
   });
 
   reading.paymentStatus = "pending";
@@ -103,7 +201,7 @@ export async function markReadingPaid(
 }
 
 export async function completeMockPayment(paymentRef: string) {
-  if (!config.isDev && process.env.PAYMENT_PROVIDER !== "mock") {
+  if (!config.isDev && config.payment.provider !== "mock") {
     throw new Error("Mock төлбөр зөвхөн хөгжүүлэлтийн горимд боломжтой");
   }
   await connectDB();
@@ -145,19 +243,112 @@ export async function getPaymentStatus(readingId: string) {
   await connectDB();
   const reading = await Reading.findOne({ readingId });
   if (!reading) throw new Error("Уншлага олдсонгүй");
-  const payment = await Payment.findOne({ readingId }).sort({ createdAt: -1 });
+  let payment = await Payment.findOne({ readingId }).sort({ createdAt: -1 });
+
+  if (
+    payment &&
+    payment.status === "pending" &&
+    EXTERNAL_PROVIDERS.includes(payment.provider as PaymentProviderName)
+  ) {
+    await syncPaymentWithProvider(payment);
+    payment = await Payment.findOne({ readingId }).sort({ createdAt: -1 });
+  }
+
   return {
     paymentStatus: reading.paymentStatus,
-    payment: payment
-      ? {
-          paymentRef: payment.paymentRef,
-          amount: payment.amount,
-          currency: payment.currency,
-          status: payment.status,
-          qrPayload: payment.qrPayload,
-          checkoutUrl: payment.checkoutUrl,
-          paidAt: payment.paidAt,
-        }
-      : null,
+    payment: payment ? paymentPayload(payment) : null,
   };
+}
+
+export async function handleProviderInvoicePaid(
+  provider: PaymentProviderName,
+  invoiceId: string
+) {
+  await connectDB();
+  const payment = await Payment.findOne({
+    providerTransactionId: invoiceId,
+    provider,
+  }).sort({ createdAt: -1 });
+
+  if (!payment) {
+    return { found: false, paid: false };
+  }
+
+  if (payment.status === "paid") {
+    return { found: true, paid: true };
+  }
+
+  await syncPaymentWithProvider(payment);
+  const refreshed = await Payment.findById(payment._id);
+  return { found: true, paid: refreshed?.status === "paid" };
+}
+
+/** @deprecated Use handleProviderInvoicePaid("qpay", id) */
+export async function handleQPayCallback(invoiceId: string) {
+  return handleProviderInvoicePaid("qpay", invoiceId);
+}
+
+export async function handleBylWebhook(raw: string) {
+  const body = JSON.parse(raw) as {
+    type?: string;
+    data?: { object?: { id?: number | string; status?: string } };
+  };
+
+  if (body.type !== "invoice.paid") {
+    return { ignored: true, paid: false };
+  }
+
+  const invoiceId = body.data?.object?.id;
+  if (invoiceId == null) {
+    return { ignored: true, paid: false };
+  }
+
+  return handleProviderInvoicePaid("byl", String(invoiceId));
+}
+
+/** Used by natal service when creating payments. */
+export async function createProviderPayment(input: {
+  productType: "reading" | "natal";
+  orderRef: string;
+  amount: number;
+  currency: string;
+  description: string;
+  readingId?: string;
+  natalOrderId?: string;
+}) {
+  const existingFilter =
+    input.productType === "natal"
+      ? { natalOrderId: input.natalOrderId, status: "pending", provider: config.payment.provider }
+      : { readingId: input.readingId, status: "pending", provider: config.payment.provider };
+
+  const existing = await Payment.findOne(existingFilter).sort({ createdAt: -1 });
+  if (existing?.providerTransactionId) return existing;
+
+  const paymentRef = generatePaymentRef();
+  const provider = getPaymentProvider();
+  const created = await provider.createPayment({
+    readingId: input.orderRef,
+    amount: input.amount,
+    currency: input.currency,
+    paymentRef,
+    description: input.description,
+  });
+
+  return Payment.create({
+    paymentRef,
+    productType: input.productType,
+    readingId: input.readingId,
+    natalOrderId: input.natalOrderId,
+    amount: input.amount,
+    currency: input.currency,
+    provider: created.provider,
+    status: "pending",
+    providerTransactionId: created.providerTransactionId,
+    qrPayload: created.qrPayload,
+    checkoutUrl: created.checkoutUrl,
+    metadata: {
+      qrImage: created.qrImage,
+      bankUrls: created.bankUrls,
+    },
+  });
 }

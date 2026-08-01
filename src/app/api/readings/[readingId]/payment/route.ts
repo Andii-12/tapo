@@ -24,7 +24,9 @@ export async function POST(
       currency: payment.currency,
       status: payment.status,
       qrPayload: payment.qrPayload,
+      qrImage: (payment.metadata as { qrImage?: string } | undefined)?.qrImage,
       checkoutUrl: payment.checkoutUrl,
+      bankUrls: (payment.metadata as { bankUrls?: unknown } | undefined)?.bankUrls,
       provider: payment.provider,
     });
   } catch (err) {
