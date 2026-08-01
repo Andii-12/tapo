@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "seed": "tsx src/scripts/seed-tarot-cards.ts",
-    "seed:admin": "tsx src/scripts/seed-admin.ts"
+    "seed:admin": "tsx src/scripts/seed-admin.ts",
+    "migrate:atlas": "tsx src/scripts/migrate-to-atlas.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
