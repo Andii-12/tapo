@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -195,7 +195,7 @@ export default function HomePage() {
               variants={fadeUp}
               className="font-serif text-sm tracking-[0.35em] text-ink md:text-base"
             >
-              ТАРО
+              TARO
             </motion.p>
             <motion.div
               variants={fadeUp}

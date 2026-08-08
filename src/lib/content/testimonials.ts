@@ -1,4 +1,4 @@
-export type TestimonialSentiment = "good" | "bad";
+﻿export type TestimonialSentiment = "good" | "bad";
 
 export type StaticTestimonial = {
   slug: string;

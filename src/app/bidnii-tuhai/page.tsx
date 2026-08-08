@@ -1,11 +1,11 @@
-import { SiteBulletList, SiteCtaRow, SitePage, SiteSection } from "@/components/content/SitePage";
+﻿import { SiteBulletList, SiteCtaRow, SitePage, SiteSection } from "@/components/content/SitePage";
 
 export default function AboutPage() {
   return (
     <SitePage
       eyebrow="✦ ABOUT ✦"
       title="Бидний тухай"
-      lead="ТАРО нь монгол хэлээр таро уншлага, төрсөн зурхайн (natal) тайланг энгийн, цэгцтэй хэлбэрээр хүргэх зорилготой платформ."
+      lead="TARO нь монгол хэлээр таро уншлага, төрсөн зурхайн (natal) тайланг энгийн, цэгцтэй хэлбэрээр хүргэх зорилготой платформ."
     >
       <SiteSection title="Бид юу хийдэг вэ?">
         <p>

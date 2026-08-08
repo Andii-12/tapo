@@ -13,6 +13,7 @@ import type {
   NatalFullReport,
   NatalPreviewReport,
 } from "@/lib/astrology/report";
+import { LIST_PRICES, formatMnt } from "@/lib/pricing";
 
 const MN_MONTHS = [
   "1-р сар",
@@ -90,8 +91,12 @@ export default function NatalPage() {
     [maxDay]
   );
 
+  const isFree = Boolean(session && session.price <= 0);
+  const listPrice = LIST_PRICES.natal;
   const priceText = session
-    ? `${session.price.toLocaleString("mn-MN")}₮`
+    ? isFree
+      ? `${formatMnt(listPrice)} → Sale Үнэгүй`
+      : formatMnt(session.price)
     : "";
 
   async function refreshSession(orderId: string, token: string) {
@@ -310,6 +315,7 @@ export default function NatalPage() {
               report={session.report}
               locked={!session.isPaid}
               priceText={priceText}
+              listPrice={isFree ? listPrice : undefined}
               onUnlock={
                 session.isPaid ? undefined : () => setPayOpen(true)
               }
@@ -355,9 +361,11 @@ export default function NatalPage() {
           natalOrderId={session.orderId}
           token={session.accessToken}
           priceText={priceText}
+          listPrice={listPrice}
+          isFree={isFree}
           onPaid={async () => {
             await refreshSession(session.orderId, session.accessToken);
-            toast("Төлбөр амжилттай");
+            toast(isFree ? "Бүрэн тайлан нээгдлээ" : "Төлбөр амжилттай");
             setPayOpen(false);
           }}
         />

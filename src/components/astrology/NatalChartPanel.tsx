@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { motion } from "framer-motion";
@@ -8,6 +8,7 @@ import type {
   NatalPreviewReport,
 } from "@/lib/astrology/report";
 import { Button } from "@/components/ui/Button";
+import { SalePrice } from "@/components/payment/SalePrice";
 import {
   BilingualText,
   BilingualTitle,
@@ -131,6 +132,7 @@ export function NatalChartPanel({
   compact = false,
   locked = false,
   priceText,
+  listPrice,
   onUnlock,
   unlockHref,
 }: {
@@ -139,6 +141,7 @@ export function NatalChartPanel({
   compact?: boolean;
   locked?: boolean;
   priceText?: string;
+  listPrice?: number;
   onUnlock?: () => void;
   unlockHref?: string;
 }) {
@@ -382,7 +385,11 @@ export function NatalChartPanel({
                 mode={langMode}
               />
             </div>
-            {priceText ? (
+            {listPrice != null ? (
+              <div className="mt-6">
+                <SalePrice listPrice={listPrice} size="xl" />
+              </div>
+            ) : priceText ? (
               <p className="mt-6 font-serif text-4xl">{priceText}</p>
             ) : null}
             <div className="mt-5">

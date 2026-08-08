@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { Cormorant_Garamond, Manrope } from "next/font/google";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -20,7 +20,7 @@ const sans = Manrope({
 });
 
 export const metadata: Metadata = {
-  title: "ТАРО — Асуултынхаа хариуг ол",
+  title: "TARO — Асуултынхаа хариуг ол",
   description:
     "Минималист таро уншлага. 3 хөзөр, 5 хөзөр болон үнэгүй Тийм/Үгүй уншлага.",
 };

@@ -1,11 +1,11 @@
-import { SiteBulletList, SiteCtaRow, SitePage, SiteSection } from "@/components/content/SitePage";
+﻿import { SiteBulletList, SiteCtaRow, SitePage, SiteSection } from "@/components/content/SitePage";
 
 export default function RefundPolicyPage() {
   return (
     <SitePage
       eyebrow="✦ REFUND ✦"
       title="Буцаан олголтын бодлого"
-      lead="ТАРО нь дижитал таро уншлага, natal тайлан хүргэдэг. Төлбөр, буцаан олголттой холбоотой дүрмийг доор тодорхойлов."
+      lead="TARO нь дижитал таро уншлага, natal тайлан хүргэдэг. Төлбөр, буцаан олголттой холбоотой дүрмийг доор тодорхойлов."
     >
       <SiteSection title="Ерөнхий зарчим">
         <p>

@@ -13,12 +13,12 @@ export function teaseText(full: string, maxLen = 160): string {
     const slice = clean.slice(0, soft);
     const space = slice.lastIndexOf(" ");
     const cut = space > 40 ? slice.slice(0, space) : slice;
-    return `${cut.replace(/[.,;:!?…]+$/u, "")}… Гэсэн ч`;
+    return `${cut.replace(/[.,;:!?…]+$/u, "")}… Үргэлжлүүлэх`;
   }
 
   const slice = clean.slice(0, target);
   const space = slice.lastIndexOf(" ");
   const cut = space > target * 0.5 ? slice.slice(0, space) : slice;
 
-  return `${cut.replace(/[.,;:!?…]+$/u, "")}… Гэсэн ч`;
+  return `${cut.replace(/[.,;:!?…]+$/u, "")}… Үргэлжлүүлэх`;
 }

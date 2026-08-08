@@ -11,9 +11,9 @@ export interface ISettings {
 const SettingsSchema = new Schema<ISettings>(
   {
     key: { type: String, default: "global", unique: true },
-    threeCardPrice: { type: Number, default: 19900 },
-    fiveCardPrice: { type: Number, default: 29900 },
-    natalPrice: { type: Number, default: 14900 },
+    threeCardPrice: { type: Number, default: 0 },
+    fiveCardPrice: { type: Number, default: 0 },
+    natalPrice: { type: Number, default: 0 },
     currency: { type: String, default: "MNT" },
   },
   { timestamps: true }

@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 
 export function Footer() {
   return (
@@ -12,7 +12,7 @@ export function Footer() {
             <span className="text-ink-soft" aria-hidden>
               ✦{" "}
             </span>
-            ТАРО
+            TARO
           </p>
           <p className="mt-2 text-sm text-ink-soft">
             Асуултынхаа хариуг ол

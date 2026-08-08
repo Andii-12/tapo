@@ -152,6 +152,7 @@ async function seed() {
       key: "global",
       threeCardPrice: config.payment.threeCardPrice,
       fiveCardPrice: config.payment.fiveCardPrice,
+      natalPrice: config.payment.natalPrice,
       currency: config.payment.currency,
     },
     { upsert: true }

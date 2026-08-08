@@ -1,4 +1,4 @@
-import type { PaymentProviderStatus } from "@/types";
+﻿import type { PaymentProviderStatus } from "@/types";
 import {
   createBylInvoice,
   getBylInvoice,
@@ -83,7 +83,7 @@ export class BylPaymentProvider implements PaymentProvider {
       amount: input.amount,
       description:
         input.description ||
-        `ТАРО төлбөр · ${input.paymentRef} · ${input.amount} ${input.currency}`,
+        `TARO төлбөр · ${input.paymentRef} · ${input.amount} ${input.currency}`,
     });
 
     return {
@@ -116,7 +116,7 @@ export class QPayPaymentProvider implements PaymentProvider {
       senderInvoiceNo: input.paymentRef,
       description:
         input.description ||
-        `ТАРО төлбөр · ${input.paymentRef} · ${input.amount} ${input.currency}`,
+        `TARO төлбөр · ${input.paymentRef} · ${input.amount} ${input.currency}`,
       amount: input.amount,
     });
 

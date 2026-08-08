@@ -1,4 +1,4 @@
-# ТАРО — Mongolian Tarot Reading Platform
+﻿# TARO — Mongolian Tarot Reading Platform
 
 Minimalist black-and-white full-stack tarot reading website with Mongolian UI.
 

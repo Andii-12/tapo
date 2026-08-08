@@ -1,4 +1,4 @@
-export const config = {
+﻿export const config = {
   appUrl: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
   mongodbUri: process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/tarot",
   jwtSecret: process.env.JWT_SECRET || "dev-jwt-secret-change-me",
@@ -40,9 +40,9 @@ export const config = {
       process.env.BYL_WEBHOOK_SECRET ||
       process.env.PAYMENT_WEBHOOK_SECRET ||
       "dev-webhook-secret",
-    threeCardPrice: Number(process.env.THREE_CARD_PRICE || 19900),
-    fiveCardPrice: Number(process.env.FIVE_CARD_PRICE || 29900),
-    natalPrice: Number(process.env.NATAL_PRICE || 14900),
+    threeCardPrice: Number(process.env.THREE_CARD_PRICE || 0),
+    fiveCardPrice: Number(process.env.FIVE_CARD_PRICE || 0),
+    natalPrice: Number(process.env.NATAL_PRICE || 0),
     currency: process.env.PAYMENT_CURRENCY || "MNT",
   },
   email: {
@@ -52,7 +52,7 @@ export const config = {
     smtpPort: Number(process.env.SMTP_PORT || 587),
     smtpUser: process.env.SMTP_USER || "",
     smtpPassword: process.env.SMTP_PASSWORD || "",
-    from: process.env.EMAIL_FROM || "ТАРО <onboarding@resend.dev>",
+    from: process.env.EMAIL_FROM || "TARO <onboarding@resend.dev>",
   },
   rateLimit: {
     windowMs: Number(process.env.RATE_LIMIT_WINDOW_MS || 60000),

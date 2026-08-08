@@ -1,4 +1,4 @@
-import { connectDB } from "@/lib/database/connect";
+﻿import { connectDB } from "@/lib/database/connect";
 import { NatalOrder } from "@/models/NatalOrder";
 import { Payment } from "@/models/Payment";
 import { config } from "@/lib/config";
@@ -121,8 +121,12 @@ export async function createNatalPayment(orderId: string, token: string) {
     amount: order.price,
     currency: order.currency,
     natalOrderId: orderId,
-    description: `ТАРО · Natal тайлан · ${orderId} · ${order.price} ${order.currency}`,
+    description: `TARO · Natal тайлан · ${orderId} · ${order.price} ${order.currency}`,
   });
+
+  if (payment.status === "paid") {
+    return payment;
+  }
 
   order.paymentStatus = "pending";
   await order.save();

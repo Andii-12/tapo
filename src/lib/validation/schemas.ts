@@ -155,9 +155,9 @@ export const cardUpdateSchema = z.object({
 });
 
 export const pricesUpdateSchema = z.object({
-  threeCardPrice: z.number().int().positive(),
-  fiveCardPrice: z.number().int().positive(),
-  natalPrice: z.number().int().positive(),
+  threeCardPrice: z.number().int().min(0),
+  fiveCardPrice: z.number().int().min(0),
+  natalPrice: z.number().int().min(0),
   currency: z.string().default("MNT"),
 });
 

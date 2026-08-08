@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -50,9 +50,9 @@ export default function AdminDashboard() {
     }>
   >([]);
   const [prices, setPrices] = useState({
-    threeCardPrice: 19900,
-    fiveCardPrice: 29900,
-    natalPrice: 14900,
+    threeCardPrice: 0,
+    fiveCardPrice: 0,
+    natalPrice: 0,
     currency: "MNT",
   });
   const [tab, setTab] = useState<"readings" | "cards" | "prices" | "reviews">(
@@ -129,7 +129,7 @@ export default function AdminDashboard() {
         setPrices({
           threeCardPrice: json.data.threeCardPrice,
           fiveCardPrice: json.data.fiveCardPrice,
-          natalPrice: json.data.natalPrice ?? 14900,
+          natalPrice: json.data.natalPrice ?? 0,
           currency: json.data.currency,
         });
       }
@@ -222,7 +222,7 @@ export default function AdminDashboard() {
     <div className="min-h-screen bg-bg">
       <header className="border-b border-border bg-bg-white">
         <div className="container-page flex h-14 items-center justify-between">
-          <p className="font-serif text-xl tracking-[0.12em]">ТАРО · Админ</p>
+          <p className="font-serif text-xl tracking-[0.12em]">TARO · Админ</p>
           <Button
             variant="secondary"
             onClick={async () => {

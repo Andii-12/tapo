@@ -1,4 +1,4 @@
-/** Shared visual language for PDF + email (free & paid). */
+﻿/** Shared visual language for PDF + email (free & paid). */
 
 export const DOC = {
   ink: "#111111",
@@ -45,7 +45,7 @@ export function emailShell(params: {
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:640px;background:${DOC.white};border:1px solid ${DOC.border};">
           <tr>
             <td style="background:${DOC.ink};padding:28px 28px 22px;text-align:center;">
-              <div style="font-family:Georgia,'Times New Roman',serif;font-size:11px;letter-spacing:0.32em;color:${DOC.gold};">✦ ТАРО ✦</div>
+              <div style="font-family:Georgia,'Times New Roman',serif;font-size:11px;letter-spacing:0.32em;color:${DOC.gold};">✦ TARO ✦</div>
               <div style="font-family:Georgia,'Times New Roman',serif;font-size:28px;font-weight:400;color:${DOC.white};margin-top:10px;letter-spacing:0.04em;">
                 ${escapeHtml(params.title)}
               </div>

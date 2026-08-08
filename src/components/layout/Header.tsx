@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -33,7 +33,7 @@ export function Header() {
           >
             ✦
           </span>
-          ТАРО
+          TARO
         </Link>
 
         <nav className="hidden items-center gap-6 lg:flex" aria-label="Үндсэн цэс">

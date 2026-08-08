@@ -223,6 +223,7 @@ export async function createReading(input: CreateReadingInput) {
   const readingId = generateReadingId();
   const prices = await getPrices();
 
+  const price = priceForType(input.readingType, prices);
   const paymentStatus: PaymentStatus =
     input.readingType === "yes-no" ? "not_required" : "pending";
 
@@ -240,7 +241,7 @@ export async function createReading(input: CreateReadingInput) {
     shuffledCardIds: shuffled.map((c) => c.id),
     selectedCardIds: [],
     paymentStatus,
-    price: priceForType(input.readingType, prices),
+    price,
     currency: prices.currency,
     emailHistory: [],
     expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),

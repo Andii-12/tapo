@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { SitePage, SiteSection } from "@/components/content/SitePage";
@@ -18,7 +18,7 @@ export default function ContactPage() {
       toast("Бүх талбарыг бөглөнө үү");
       return;
     }
-    const subject = encodeURIComponent(`ТАРО холбоо — ${name.trim()}`);
+    const subject = encodeURIComponent(`TARO холбоо — ${name.trim()}`);
     const body = encodeURIComponent(
       `Нэр: ${name.trim()}\nИ-мэйл: ${email.trim()}\n\n${message.trim()}`
     );

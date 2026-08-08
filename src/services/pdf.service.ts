@@ -1,4 +1,4 @@
-import PDFDocument from "pdfkit";
+﻿import PDFDocument from "pdfkit";
 import { existsSync } from "fs";
 import { assertReadingAccess, getActiveCards } from "@/services/reading.service";
 import { assertNatalAccess } from "@/services/natal.service";
@@ -37,8 +37,8 @@ function createDoc() {
     size: "A4",
     bufferPages: true,
     info: {
-      Title: "ТАРО",
-      Author: "ТАРО",
+      Title: "TARO",
+      Author: "TARO",
     },
   });
   const fonts = resolveFonts();

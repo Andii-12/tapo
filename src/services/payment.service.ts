@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+﻿import mongoose from "mongoose";
 import { connectDB } from "@/lib/database/connect";
 import { Payment, type IPayment } from "@/models/Payment";
 import { Reading } from "@/models/Reading";
@@ -43,7 +43,7 @@ function paymentDescription(
   readingType?: ReadingType
 ) {
   if (product === "natal") {
-    return `ТАРО · Natal тайлан · ${ref} · ${amount} ${currency}`;
+    return `TARO · Natal тайлан · ${ref} · ${amount} ${currency}`;
   }
   const label =
     readingType === "five-card"
@@ -51,7 +51,7 @@ function paymentDescription(
       : readingType === "three-card"
         ? "3 хөзрийн уншлага"
         : "Таро уншлага";
-  return `ТАРО · ${label} · ${ref} · ${amount} ${currency}`;
+  return `TARO · ${label} · ${ref} · ${amount} ${currency}`;
 }
 
 export async function getPrices() {
@@ -65,9 +65,21 @@ export async function getPrices() {
       natalPrice: config.payment.natalPrice,
       currency: config.payment.currency,
     });
-  } else if (settings.natalPrice == null) {
-    settings.natalPrice = config.payment.natalPrice;
-    await settings.save();
+  } else {
+    let dirty = false;
+    if (settings.threeCardPrice !== config.payment.threeCardPrice) {
+      settings.threeCardPrice = config.payment.threeCardPrice;
+      dirty = true;
+    }
+    if (settings.fiveCardPrice !== config.payment.fiveCardPrice) {
+      settings.fiveCardPrice = config.payment.fiveCardPrice;
+      dirty = true;
+    }
+    if (settings.natalPrice !== config.payment.natalPrice) {
+      settings.natalPrice = config.payment.natalPrice;
+      dirty = true;
+    }
+    if (dirty) await settings.save();
   }
   return settings;
 }
@@ -116,7 +128,10 @@ export async function createPaymentOrder(readingId: string) {
   if (reading.readingType === "yes-no") {
     throw new Error("Энэ уншлага үнэгүй тул төлбөр шаардлагагүй");
   }
-  if (reading.paymentStatus === "paid") {
+  if (
+    reading.paymentStatus === "paid" ||
+    reading.paymentStatus === "not_required"
+  ) {
     throw new Error("Төлбөр аль хэдийн амжилттай болсон");
   }
 
@@ -134,6 +149,26 @@ export async function createPaymentOrder(readingId: string) {
 
   const prices = await getPrices();
   const amount = priceForType(reading.readingType, prices);
+
+  if (amount <= 0) {
+    const paymentRef = generatePaymentRef();
+    const payment = await Payment.create({
+      paymentRef,
+      productType: "reading",
+      readingId,
+      amount: 0,
+      currency: prices.currency,
+      provider: "mock",
+      status: "paid",
+      paidAt: new Date(),
+    });
+    reading.price = 0;
+    reading.currency = prices.currency;
+    reading.paymentStatus = "paid";
+    await reading.save();
+    return payment;
+  }
+
   const paymentRef = generatePaymentRef();
   const provider = getPaymentProvider();
 
@@ -323,6 +358,23 @@ export async function createProviderPayment(input: {
 
   const existing = await Payment.findOne(existingFilter).sort({ createdAt: -1 });
   if (existing?.providerTransactionId) return existing;
+
+  if (input.amount <= 0) {
+    const paymentRef = generatePaymentRef();
+    const payment = await Payment.create({
+      paymentRef,
+      productType: input.productType,
+      readingId: input.readingId,
+      natalOrderId: input.natalOrderId,
+      amount: 0,
+      currency: input.currency,
+      provider: "mock",
+      status: "paid",
+      paidAt: new Date(),
+    });
+    await fulfillPaidPayment(payment);
+    return payment;
+  }
 
   const paymentRef = generatePaymentRef();
   const provider = getPaymentProvider();

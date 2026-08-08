@@ -1,11 +1,11 @@
-import { SiteBulletList, SiteCtaRow, SitePage, SiteSection } from "@/components/content/SitePage";
+﻿import { SiteBulletList, SiteCtaRow, SitePage, SiteSection } from "@/components/content/SitePage";
 
 export default function TermsPage() {
   return (
     <SitePage
       eyebrow="✦ TERMS ✦"
       title="Үйлчилгээний нөхцөл"
-      lead="ТАРО вебсайтыг ашигласнаар та дараах нөхцөлийг хүлээн зөвшөөрсөнд тооцогдоно."
+      lead="TARO вебсайтыг ашигласнаар та дараах нөхцөлийг хүлээн зөвшөөрсөнд тооцогдоно."
     >
       <SiteSection title="1. Үйлчилгээний зориулалт">
         <p>

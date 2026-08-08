@@ -9,11 +9,13 @@ import { Button } from "@/components/ui/Button";
 import { ProgressSteps } from "@/components/ui/ProgressSteps";
 import { Modal } from "@/components/ui/Modal";
 import { PaymentModal } from "@/components/payment/PaymentModal";
+import { SalePrice } from "@/components/payment/SalePrice";
 import { NatalChartPanel } from "@/components/astrology/NatalChartPanel";
 import { useToast } from "@/components/ui/Toast";
 import { MysticAtmosphere } from "@/components/ui/MysticAtmosphere";
 import { BilingualText, BilingualTitle, LangModeSwitch, type LangMode } from "@/components/ui/BilingualText";
 import { positionEn, positionLabel } from "@/lib/tarot/bilingual";
+import { formatMnt, listPriceForReading } from "@/lib/pricing";
 import type { NatalChartResult } from "@/lib/astrology/natal";
 import type {
   NatalFullReport,
@@ -192,11 +194,19 @@ export function RevealStage({
             Таны сонгосон хөзрүүд
           </h1>
         </motion.div>
-        <div className="mx-auto mt-12 grid max-w-5xl grid-cols-1 gap-8 sm:grid-cols-3 md:grid-cols-5 md:gap-6">
+        <div
+          className={`mx-auto mt-12 grid justify-center gap-8 md:gap-6 ${
+            reading.selectedCards.length <= 1
+              ? "max-w-xs grid-cols-1"
+              : reading.selectedCards.length <= 3
+                ? "max-w-3xl grid-cols-1 sm:grid-cols-3"
+                : "max-w-5xl grid-cols-1 sm:grid-cols-3 md:grid-cols-5"
+          }`}
+        >
           {reading.selectedCards.map((card, i) => (
             <motion.div
               key={card.id}
-              className="text-center"
+              className="mx-auto w-full max-w-[200px] text-center sm:max-w-none"
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.12, duration: 0.55 }}
@@ -522,7 +532,14 @@ export function ReadingResult({
     }
   }
 
-  const priceText = `${(reading.price || 19900).toLocaleString("mn-MN")}₮`;
+  const priceAmount = reading.price ?? 0;
+  const isFree = priceAmount <= 0;
+  const listPrice = listPriceForReading(reading.readingType);
+  const priceText = isFree
+    ? listPrice != null
+      ? `${formatMnt(listPrice)} → Sale Үнэгүй`
+      : "Үнэгүй"
+    : formatMnt(priceAmount);
   const paidChapters = PAID_CHAPTERS.map((c) => ({
     ...c,
     bodyMn: reading.paidResult?.[c.key] as string | undefined,
@@ -933,12 +950,20 @@ export function ReadingResult({
               <h2 className="mt-2 font-serif text-3xl">Үргэлжлэлийг нээх</h2>
               <p className="mt-3 max-w-2xl text-sm text-ink-muted">
                 Хөзөр бүрийн бүрэн тайлбар, асуултад өгөх дэлгэрэнгүй хариу,
-                холбоо, саад, зөвлөгөө болон боломжит үр дүнг төлбөрийн дараа
-                бүрэн уншина.
+                холбоо, саад, зөвлөгөө болон боломжит үр дүнг{" "}
+                {isFree ? "үнэгүй нээнэ" : "төлбөрийн дараа бүрэн уншина"}.
               </p>
-              <p className="mt-8 font-serif text-4xl">{priceText}</p>
+              <div className="mt-8">
+                {isFree && listPrice != null ? (
+                  <SalePrice listPrice={listPrice} size="xl" />
+                ) : (
+                  <p className="font-serif text-4xl">{priceText}</p>
+                )}
+              </div>
               <div className="mt-6">
-                <Button onClick={() => setPayOpen(true)}>Үргэлжлүүлэх</Button>
+                <Button onClick={() => setPayOpen(true)}>
+                  {isFree ? "Үнэгүй нээх" : "Үргэлжлүүлэх"}
+                </Button>
               </div>
             </div>
           </div>
@@ -978,9 +1003,15 @@ export function ReadingResult({
           readingId={reading.readingId}
           token={token}
           priceText={priceText}
+          listPrice={listPrice ?? undefined}
+          isFree={isFree}
           onPaid={async () => {
             await onRefresh();
-            toast("Төлбөр амжилттай — бүрэн тайлан нээгдлээ");
+            toast(
+              isFree
+                ? "Бүрэн тайлан нээгдлээ"
+                : "Төлбөр амжилттай — бүрэн тайлан нээгдлээ"
+            );
             setPayOpen(false);
           }}
         />
